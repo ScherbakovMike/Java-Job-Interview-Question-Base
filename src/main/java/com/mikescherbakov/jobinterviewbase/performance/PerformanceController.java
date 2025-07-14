@@ -15,11 +15,9 @@ public class PerformanceController {
   // http://localhost:8080/actuator/metrics/my.timer
   @GetMapping("/time")
   public String timeSomething() {
-    Runnable action = () -> {
+    Runnable action = () -> {};
 
-    };
     timer.record(action);
     return "Action has been recorded.";
   }
-
 }
