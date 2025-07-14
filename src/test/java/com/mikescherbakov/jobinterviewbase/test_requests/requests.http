@@ -1,0 +1,14 @@
+GET http://localhost:8081/allocate?
+    megabytes=1000&
+    type=short
+Accept: application/json
+
+###
+GET http://localhost:8081/allocate?
+    megabytes=1000&
+    type=long
+Accept: application/json
+
+###
+GET http://localhost:8081/clear
+Accept: application/json

@@ -15,7 +15,7 @@
   <name>Job Interview Base</name>
   <description>Job Interview Base</description>
   <properties>
-    <java.version>23</java.version>
+    <java.version>21</java.version>
     <micrometer.version>1.12.2</micrometer.version>
   </properties>
   <dependencies>

@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  serial-gc-app:
+    build: .
+    container_name: demo-serial-gc
+    ports:
+      - "8081:8080"
+    environment:
+      # Pass flags for Serial GC
+      JAVA_TOOL_OPTIONS: "-XX:+UseSerialGC -Xlog:gc*:file=./logs/serial-gc.log:time,level,tags"
+    volumes:
+      - ./logs:/app/logs
+
+  g1-gc-app:
+    build: .
+    container_name: demo-g1-gc
+    ports:
+      - "8082:8080"
+    environment:
+      # Pass flags for G1 GC
+      JAVA_TOOL_OPTIONS: "-XX:+UseG1GC -Xlog:gc*:file=./logs/g1-gc.log:time,level,tags"
+    volumes:
+      - ./logs:/app/logs
+
+  zgc-app:
+    build: .
+    container_name: demo-zgc-gc
+    ports:
+      - "8083:8080"
+    environment:
+      # Pass flags for ZGC
+      JAVA_TOOL_OPTIONS: "-XX:+UseZGC -Xlog:gc*:file=./logs/zgc-gc.log:time,level,tags"
+    volumes:
+      - ./logs:/app/logs
