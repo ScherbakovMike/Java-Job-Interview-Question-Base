@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: service1
+  config:
+    import: classpath:services.yml, classpath:datadog.yml, classpath:logging.yml
+server:
+  port: 8081
