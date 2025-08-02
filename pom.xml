@@ -9,6 +9,9 @@
     <version>3.5.3</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
+  <modules>
+    <module>service1</module>
+  </modules>
   <groupId>com.mikescherbakov</groupId>
   <artifactId>JobInterviewBase</artifactId>
   <version>0.0.1-SNAPSHOT</version>
