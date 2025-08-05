@@ -1,16 +1,14 @@
 package com.mikescherbakov.springstarterautoconfigure.service;
 
 import com.mikescherbakov.springstarterautoconfigure.properties.*;
+import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.context.properties.*;
 import org.springframework.context.annotation.*;
 
-@Configuration
+@AutoConfiguration
 @EnableConfigurationProperties(GreeterProperties.class)
-@ConditionalOnProperty(
-    prefix = "greeter.service",
-    name = "enabled",
-    havingValue = "true")
+@ConditionalOnProperty(prefix = "greeter.service", name = "enabled", havingValue = "true")
 public class GreeterAutoConfiguration {
   private final GreeterProperties properties;
 

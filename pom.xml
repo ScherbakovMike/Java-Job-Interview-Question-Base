@@ -12,9 +12,11 @@
   <groupId>com.mikescherbakov</groupId>
   <artifactId>JobInterviewBase</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <name>Job Interview Base</name>
   <description>Job Interview Base</description>
     <modules>
+      <module>parent-starter-user</module>
         <module>spring-starter-autoconfigure</module>
         <module>spring-starter</module>
     </modules>

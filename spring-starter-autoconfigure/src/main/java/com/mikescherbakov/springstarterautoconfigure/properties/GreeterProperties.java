@@ -8,20 +8,14 @@ import org.springframework.boot.context.properties.*;
 @Setter
 public class GreeterProperties {
 
-    private boolean enabled = false; // default
+  private boolean enabled = false; // default
 
-    /**
-     * The name of the user to greet.
-     */
-    private String userName = "World";
+  /** The name of the user to greet. */
+  private String userName = "World";
 
-    /**
-     * The salutation to use in the greeting.
-     */
-    private String salutation = "Hello";
+  /** The salutation to use in the greeting. */
+  private String salutation = "Hello";
 
-    /**
-     * The suffix to add to the greeting.
-     */
-    private String suffix = "!";
+  /** The suffix to add to the greeting. */
+  private String suffix = "!";
 }
