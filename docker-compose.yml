@@ -1,0 +1,141 @@
+version: '3.8'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - elastic
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - xpack.security.enabled=false
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=http://elasticsearch:9200
+    ports:
+      - "9411:9411"
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+
+  datadog-agent:
+    image: gcr.io/datadoghq/agent:7
+    container_name: datadog-agent
+    environment:
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_SITE=${DD_SITE}
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+      - DD_ENV=${DD_ENV}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+    ports:
+      - "8126:8126"
+      - "8125:8125/udp"
+    networks:
+      - elastic
+
+  service1:
+    build:
+      context: ./service1
+      dockerfile: Dockerfile
+    container_name: service1
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - SERVICES_SERVICE2_URL=http://service2:8082
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_AGENT_HOST=datadog-agent
+      - ENVIRONMENT=${ENVIRONMENT}
+    depends_on:
+      - zipkin
+      - service2
+      - datadog-agent
+    networks:
+      - elastic
+
+  service2:
+    build:
+      context: ./service2
+      dockerfile: Dockerfile
+    container_name: service2
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - SERVICES_SERVICE3_URL=http://service3:8083
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_AGENT_HOST=datadog-agent
+      - ENVIRONMENT=${ENVIRONMENT}
+    depends_on:
+      - zipkin
+      - service3
+      - datadog-agent
+    networks:
+      - elastic
+
+  service3:
+    build:
+      context: ./service3
+      dockerfile: Dockerfile
+    container_name: service3
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_AGENT_HOST=datadog-agent
+      - ENVIRONMENT=${ENVIRONMENT}
+    depends_on:
+      - zipkin
+      - datadog-agent
+    networks:
+      - elastic
+
+volumes:
+  elasticsearch-data:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge

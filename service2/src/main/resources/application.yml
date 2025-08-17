@@ -1,12 +1,12 @@
 spring:
   application:
-    name: service1
+    name: service2
   config:
     import: classpath:services.yml, classpath:datadog.yml, classpath:logging.yml, classpath:tracing.yml
   main:
     allow-bean-definition-overriding: true
 server:
-  port: 8081
+  port: 8082
 
 management:
   metrics:

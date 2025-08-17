@@ -1,0 +1,3 @@
+services:
+  service3:
+    url: ${SERVICES_SERVICE3_URL:http://localhost:8083}
